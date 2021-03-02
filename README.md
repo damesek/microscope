@@ -7,6 +7,7 @@ This is a **microscope** for Clojure functions.<BR>
 
 Few bugs here:
 - defn<> missing meta etc handling, I created for quick fn tests
+- my first test repo, mainly for deployment test (use carefully)
 
 I didn't test in production environment.<BR> 
 Explore, extract extract information.
