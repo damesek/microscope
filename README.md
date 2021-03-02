@@ -3,6 +3,8 @@
 This is a **microscope** for Clojure functions.<BR>
 [I created a few years ago for myself to debug things.]
 
+`[org.clojars.baader/microscope "0.1.0-SNAPSHOT"]`
+
 Few bugs here:
 - defn<> missing meta etc handling, I created for quick fn tests
 
@@ -13,6 +15,13 @@ Explore, extract extract information.
 ## Usage
 
 Very easy to use:
+
+```clojure
+(ns your.ns
+  (:require [microscope.monitor :refer [defn<> extract<> let<>
+                                        current-function-name<> line<>
+                                        filename<> methodname<> full<>]]))
+```
 
 Use defn<> microscope function instead of clojure.core defn:
  ```Clojure
