@@ -5,9 +5,14 @@ This is a **microscope** for Clojure functions.<BR>
 
 `[org.clojars.baader/microscope "0.1.0-SNAPSHOT"]`
 
-Few bugs here:
+Few things:
 - defn<> missing meta etc handling, I created for quick fn tests
 - my first test repo, mainly for deployment test (use carefully)
+
+Todo: 
+ - missing tests
+ - codox
+
 
 I didn't test in production environment.<BR> 
 Explore, extract extract information.
