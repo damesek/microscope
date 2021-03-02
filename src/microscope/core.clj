@@ -1,6 +1,6 @@
 (ns microscope.core)
 
-(defn foo
-  "I don't do a whole lot."
+(defn- what-else
+  "Please George..."
   [x]
-  (println x "Hello, World!"))
+  (println x "Hello, one more coffee for George Clooney..!"))
