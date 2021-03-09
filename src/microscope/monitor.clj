@@ -67,14 +67,15 @@
       (do  (m/debug)
          (println x))))"
   []
-  (reset! current-function (current-function-name))
+  (reset! current-function (current-function-name<>))
     `(let [start# (System/nanoTime)]
        (clojure.pprint/pprint
          (hash-map ~@(->> &env keys (mapcat (fn [x] [`'~x x])))))
        ; (println (binding [*print-meta* true] (pr "form data " '~&form)))
        (println " current ns" (str *ns*)
                 ;"\n which function " (deref current-function)
-                "\n current function " (current-function-name))
+                "\n current function " (current-function-name<>)
+                "\n function meta" (meta (ns-resolve *ns* (symbol ((clojure.string/split (current-function-name<>) #"\$") 1)))))
        ;(current-fn .getLineNumber .getFileName.getMethodName))
        ;(println (meta (intern (symbol (str *ns*)) (second ,,,fixit,,,))))
        (println "Elapsed time: " (/ (- (System/nanoTime) start#) 1000000.0) " ms")))
@@ -92,6 +93,6 @@
   `(let [~@(mapcat (fn [[n v]]
                      (if (or (vector? n) (map? n))
                        [n v]
-                       [n v '_ `(println (current-function-name) (name '~n) ":" ~v)]))
+                       [n v '_ `(println (current-function-name<>) (name '~n) ":" ~v)]))
                    (partition 2 bindings))]
      ~@body))
