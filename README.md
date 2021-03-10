@@ -3,10 +3,12 @@
 This is a **microscope** for Clojure functions.<BR>
 [I created a few years ago for myself to debug things.]
 
-`[org.clojars.baader/microscope "0.1.0-SNAPSHOT"]`
+`[hu.baader/microscope "0.1.0-SNAPSHOT"]`
+
 
 Few things:
-- defn<> missing meta etc handling, I created for quick fn tests
+- UNDER DEVELOPMENT - do not use
+- defn<> bug plus missing meta etc handling, I created for quick fn tests
 - my first test repo, mainly for deployment test (use carefully)
 
 Todo: 

@@ -8,7 +8,7 @@
 (defmacro spy-form []
   "line, caller name"
   `(binding [*print-meta* true]
-              (pr '~&form)))
+     (pr '~&form)))
 
 
 ; Thanks to Andy Fingerhut/ Clojurians Slack
@@ -40,7 +40,7 @@
 
 (defmacro current-function-name<> []
   "Returns a string, the name of the current Clojure function"
-  `(-> (Throwable.) .getStackTrace first .getClassName ))
+  `(-> (Throwable.) .getStackTrace first .getClassName))
 
 (defmacro line<> []
   `(-> (Throwable.) .getStackTrace first .getLineNumber))
@@ -56,8 +56,8 @@
   `(-> (Throwable.) .getStackTrace first))
 
 (defmacro current-fn<> [& args]
-    "Returns a string, the name of the current Clojure function"
-    `(map #(-> (Throwable.) .getStackTrace first `%) ~@args))
+  "Returns a string, the name of the current Clojure function"
+  `(map #(-> (Throwable.) .getStackTrace first `%) ~@args))
 
 
 (defmacro extract<>
@@ -68,17 +68,17 @@
          (println x))))"
   []
   (reset! current-function (current-function-name<>))
-    `(let [start# (System/nanoTime)]
-       (clojure.pprint/pprint
-         (hash-map ~@(->> &env keys (mapcat (fn [x] [`'~x x])))))
-       ; (println (binding [*print-meta* true] (pr "form data " '~&form)))
-       (println " current ns" (str *ns*)
-                ;"\n which function " (deref current-function)
-                "\n current function " (current-function-name<>)
-                "\n function meta" (meta (ns-resolve *ns* (symbol ((clojure.string/split (current-function-name<>) #"\$") 1)))))
-       ;(current-fn .getLineNumber .getFileName.getMethodName))
-       ;(println (meta (intern (symbol (str *ns*)) (second ,,,fixit,,,))))
-       (println "Elapsed time: " (/ (- (System/nanoTime) start#) 1000000.0) " ms")))
+  `(let [start# (System/nanoTime)]
+     (clojure.pprint/pprint
+       (hash-map ~@(->> &env keys (mapcat (fn [x] [`'~x x])))))
+     ; (println (binding [*print-meta* true] (pr "form data " '~&form)))
+     (println " current ns" (str *ns*)
+              ;"\n which function " (deref current-function)
+              "\n current function " (current-function-name<>)
+              "\n function meta" (meta (ns-resolve *ns* (symbol ((clojure.string/split (current-function-name<>) #"\$") 1)))))
+     ;(current-fn .getLineNumber .getFileName.getMethodName))
+     ;(println (meta (intern (symbol (str *ns*)) (second ,,,fixit,,,))))
+     (println "Elapsed time: " (/ (- (System/nanoTime) start#) 1000000.0) " ms")))
 
 (def fn-state (atom nil))
 
@@ -88,33 +88,37 @@
   (reset! current-function (current-function-name<>))
   `(let [start# (System/nanoTime)]
      ; (println (binding [*print-meta* true] (pr "form data " '~&form)))
-     (reset! fn-state {:ns (str *ns*)
+     (reset! fn-state {:ns               (str *ns*)
                        :current-function (current-function-name<>)
-                       :function-meta (meta (ns-resolve *ns* (symbol ((clojure.string/split (current-function-name<>) #"\$") 1))))
+                       :function-meta    (meta (ns-resolve *ns* (symbol ((clojure.string/split (current-function-name<>) #"\$") 1))))
                        ;:current-fn-test (current-fn .getLineNumber .getFileName.getMethodName)
-                       :got-args (hash-map ~@(->> &env keys (mapcat (fn [x] [`'~x x]))))
-                       :elapsed-time (str "Elapsed time: " (/ (- (System/nanoTime) start#) 1000000.0) " ms")})
+                       :got-args         (hash-map ~@(->> &env keys (mapcat (fn [x] [`'~x x]))))
+                       :elapsed-time     (str "Elapsed time: " (/ (- (System/nanoTime) start#) 1000000.0) " ms")})
      ))
 
+;; not work
 (defmacro defn<> [fn bindings & body]
-  `(do (defn ~fn ~bindings (extract<>) ~@body)))
+  `(do (defn ~fn ~bindings (println ~`(look<>))
+         ~@body)))
+
+(macroexpand-1 '(defn<> he [x y] (+ x y)))
 
 (defmacro tryfn<> [fn bindings & body]
   `(do (defn ~fn ~bindings
-         (let [lk#  ~`(look<>)]
-         (try ~@body
-               (catch Exception e#
-                 (println "Caught exception:\n" (.getMessage e#) "\n"
-                          "\nCaught environment:\n"
-                          ":in-ns " (:ns lk#)
-                          "\n :current-function" (:current-function lk#)
-                          "\n :where" (str (->> lk# :function-meta :line) ":" (->> lk# :function-meta :column))
-                          "\n :fn-arglist" (->> lk# :function-meta :arglists)
-                          "\n :got-args" (->> lk# :got-args)
-                          "\n :function-name" (->> lk# :function-meta :name)
-                          "\n :elapsed-time" (->> lk# :elapsed-time))))))))
+         (let [lk# ~`(look<>)]
+           (try ~@body
+                (catch Exception e#
+                  (println "Caught exception:\n" (.getMessage e#) "\n"
+                           "\nCaught environment:\n"
+                           ":in-ns " (:ns lk#)
+                           "\n :current-function" (:current-function lk#)
+                           "\n :where" (str (->> lk# :function-meta :line) ":" (->> lk# :function-meta :column))
+                           "\n :fn-arglist" (->> lk# :function-meta :arglists)
+                           "\n :got-args" (->> lk# :got-args)
+                           "\n :function-name" (->> lk# :function-meta :name)
+                           "\n :elapsed-time" (->> lk# :elapsed-time))))))))
 
-; (macroexpand-1 '(tryfn<> he [x y] (+ x y)))
+
 
 ;; From  https://github.com/scottjad/uteal
 

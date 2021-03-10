@@ -7,7 +7,7 @@
 (comment
   (defn<> he
           [x y]
-            (+ x y))
+          (+ x y))
 
   ((clojure.string/split (current-function-name<>) #"\$") 1)
 
@@ -33,6 +33,9 @@
 
   (debug-test2 2)
 
+  (let<> [i 3]
+          (for [x (into [] (range i))]
+            x))
 
 
   (tryfn<> he [x y] (+ x y))
