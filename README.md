@@ -7,7 +7,7 @@ This is a **microscope** for Clojure functions.<BR>
 
 
 Few things:
-- this repo create to learn, how to start a Clojars lib
+- I created this repo to test how to start a Clojars lib
 - UNDER DEVELOPMENT - do not use
 - defn<> bug plus missing meta etc handling, I created for quick fn tests
 - my first test repo, mainly for deployment test (use carefully)
