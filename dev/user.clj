@@ -1,13 +1,13 @@
 (ns user
   (:require [microscope.monitor :refer [defn<> extract<> let<>
                                         current-function-name<> line<>
-                                        filename<> methodname<> full<>]]))
+                                        filename<> methodname<> full<>
+                                        tryfn<>]]))
 
 (comment
   (defn<> he
           [x y]
-          (let [valami [x y]]
-            (+ x y)))
+            (+ x y))
 
   ((clojure.string/split (current-function-name<>) #"\$") 1)
 
@@ -33,6 +33,25 @@
 
   (debug-test2 2)
 
+
+
+  (tryfn<> he [x y] (+ x y))
+
+  (he 2 3)
+  (he 2 "a")
+
+  ;=>
+  ;Caught exception:
+  ;java.lang.String cannot be cast to java.lang.Number
+  ;Caught environment:  :in-ns  user
+  ;:current-function user$he
+  ;:where 67:3
+  ;:fn-arglist ([x y])
+  ;:got-args {x 2, y a}
+  ;:function-name he
+  ;:elapsed-time Elapsed time: 1.076506 ms
+
+  (try-> (str " Get single range call\n form ns: " *ns* "\n")
+         (add-two 2 "a"))
+
   )
-
-

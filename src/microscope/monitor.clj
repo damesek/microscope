@@ -55,7 +55,7 @@
 (defmacro full<> []
   `(-> (Throwable.) .getStackTrace first))
 
-(defmacro current-fn [& args]
+(defmacro current-fn<> [& args]
     "Returns a string, the name of the current Clojure function"
     `(map #(-> (Throwable.) .getStackTrace first `%) ~@args))
 
@@ -80,9 +80,41 @@
        ;(println (meta (intern (symbol (str *ns*)) (second ,,,fixit,,,))))
        (println "Elapsed time: " (/ (- (System/nanoTime) start#) 1000000.0) " ms")))
 
+(def fn-state (atom nil))
+
+(defmacro look<>
+  "same as extract<>, give back data instead of print"
+  []
+  (reset! current-function (current-function-name<>))
+  `(let [start# (System/nanoTime)]
+     ; (println (binding [*print-meta* true] (pr "form data " '~&form)))
+     (reset! fn-state {:ns (str *ns*)
+                       :current-function (current-function-name<>)
+                       :function-meta (meta (ns-resolve *ns* (symbol ((clojure.string/split (current-function-name<>) #"\$") 1))))
+                       ;:current-fn-test (current-fn .getLineNumber .getFileName.getMethodName)
+                       :got-args (hash-map ~@(->> &env keys (mapcat (fn [x] [`'~x x]))))
+                       :elapsed-time (str "Elapsed time: " (/ (- (System/nanoTime) start#) 1000000.0) " ms")})
+     ))
+
 (defmacro defn<> [fn bindings & body]
   `(do (defn ~fn ~bindings (extract<>) ~@body)))
 
+(defmacro tryfn<> [fn bindings & body]
+  `(do (defn ~fn ~bindings
+         (let [lk#  ~`(look<>)]
+         (try ~@body
+               (catch Exception e#
+                 (println "Caught exception:\n" (.getMessage e#) "\n"
+                          "\nCaught environment:\n"
+                          ":in-ns " (:ns lk#)
+                          "\n :current-function" (:current-function lk#)
+                          "\n :where" (str (->> lk# :function-meta :line) ":" (->> lk# :function-meta :column))
+                          "\n :fn-arglist" (->> lk# :function-meta :arglists)
+                          "\n :got-args" (->> lk# :got-args)
+                          "\n :function-name" (->> lk# :function-meta :name)
+                          "\n :elapsed-time" (->> lk# :elapsed-time))))))))
+
+; (macroexpand-1 '(tryfn<> he [x y] (+ x y)))
 
 ;; From  https://github.com/scottjad/uteal
 
