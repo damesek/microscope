@@ -100,7 +100,7 @@
 
 
 (defn- print-fn [expr]
-  (cond (list? expr) (if-not (str/includes? (str (first expr)) "mymacros")
+  (cond (list? expr) (if-not (str/includes? (str (first expr)) "microscope")
                        expr
                        (apply concat (rest expr)))
         :else expr))

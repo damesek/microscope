@@ -34,18 +34,30 @@ Very easy to use:
 
 Use defn<> microscope function instead of clojure.core defn:
  ```Clojure
-  (defn<> he [x y]
-           (let [valami [x y]]
-            (+ x y)))
+(defn<> deb [a b]
+          (for [x (into [] (range a))]
+            (* 3 (+ 2 b))))
 ```
 You will get back from `(ns user)`:
 
 ```clojure
-{x 2, y 3}
- current ns user 
- current function  user$he
-Elapsed time:  2.364  ms
-=> 5
+(deb 2 3)
+0 () => microscope.monitor$deb
+
+ :function name  microscope.monitor$deb 
+ :where          202:3 
+ :fn-arglist     ([a b]) 
+ :got-args       {} 
+ -------------------------------- 
+ 
+1 (range a) => (0 1)
+2 (into [] (range a)) => [0 1]
+3 (+ 2 b) => 5
+4 (* 3 (+ 2 b)) => 15
+5 (+ 2 b) => 5
+6 (* 3 (+ 2 b)) => 15
+7 (for [x (into [] (range a))] (* 3 (+ 2 b))) => (15 15)
+=> (15 15)
 ```
 
 
