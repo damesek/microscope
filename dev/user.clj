@@ -9,10 +9,6 @@
           [x y]
           (+ x y))
 
-  ((clojure.string/split (current-function-name<>) #"\$") 1)
-
-  (meta (ns-resolve *ns* (symbol "defn<>")))
-
 
   (let<>
     [x 1 y 2]
@@ -21,6 +17,9 @@
   (defn debug-test2 [i]
     (for [x (into [] (range i))]
       (do (extract<>) x)))
+
+  (coll? (for [x (into [] (range 5))]
+          (do (extract<>) x)))
 
   (defn debug-test2 [i]
     (pr (current-function-name<>)
@@ -33,9 +32,41 @@
 
   (debug-test2 2)
 
+  (defn<> foo [a b & [c]]
+    (if c
+      (* a b c)
+      (* a b 100)))
+
+  (map #(do % (extract<>)) (list* [a b]))
+  (walk (partial postwalk-code foo) foo [2 3])
+
+
+
+
+
+(defn fooo [a b & [c]]
+
+  (if c
+    (do (extract<>) (* a b c))
+    (do (extract<>) (* a b 100))))
+
+(defmacro info-about-caller []
+
+  (pprint {:form &form :env &env}) `(println "macro was called!"))
+
   (let<> [i 3]
-          (for [x (into [] (range i))]
+          (for [(do (print x) x) (into [] (range i))]
             x))
+
+
+(let [i 3]
+       (for [~`(do (print x) x) (into [] (range i))]
+         x))
+
+  (let<> [a (take 5 (range))
+        {:keys [b c d] :or {d 10 b 20 c 30}} {:c 50 :d 100}
+        [e f g & h] ["a" "b" "c" "d" "e"]]
+    [a b c d e f g h])
 
 
   (tryfn<> he [x y] (+ x y))
